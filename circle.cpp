@@ -1,13 +1,12 @@
-#include "rect.h"
+#include "circle.h"
 
 #include <iostream>
 #include <fstream>
 
 
 
-Rect::Rect()
+Circle::Circle(int details)
     : m_VBO(),
-      m_EBO(),
       m_VAO(),
       m_shadProg(),
       m_modelLoc(),
@@ -17,11 +16,16 @@ Rect::Rect()
       m_model(1.0f),
       m_color(0.5f),
       
-      m_pos(0.0f),
-      m_size(1.0f)
+      m_pos(),
+      m_radius(),
+      m_details()
 {
+    m_pos = glm::vec2(0.0f);
+    m_radius = 1.0f;
+    m_details = details;
+    
     std::ifstream ifs;
-    ifs.open("rectShader.vert");
+    ifs.open("circleShader.vert");
     if (!ifs.is_open())
     {
         std::cout << "file is not open!" << std::endl;
@@ -35,7 +39,7 @@ Rect::Rect()
     ifs.read(vertexShaderSource, fileSize);
     ifs.close();
     
-    ifs.open("rectShader.frag");
+    ifs.open("circleShader.frag");
     if (!ifs.is_open())
     {
         std::cout << "file is not open!" << std::endl;
@@ -49,48 +53,20 @@ Rect::Rect()
     ifs.read(fragmentShaderSource, fileSize);
     ifs.close();
     
-    GLfloat vertices[] =
-    {
-        -0.5f,  -0.5f,    0.0f,
-        0.5f,   -0.5f,    0.0f,
-        -0.5f,   0.5f,    0.0f,
-        0.5f,    0.5f,    0.0f,
-    };
-    
-    GLuint indices[] =
-    {
-        0, 1, 2,
-        1, 2, 3
-    };
-    
     glGenBuffers(1, &m_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(
-                GL_ARRAY_BUFFER,
-                sizeof(vertices), vertices,
-                GL_STATIC_DRAW
-                );
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    glGenBuffers(1, &m_EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-    glBufferData(
-                GL_ELEMENT_ARRAY_BUFFER,
-                sizeof(indices), indices,
-                GL_STATIC_DRAW
-                );
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glVertexAttribPointer(
                 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
                 reinterpret_cast<GLvoid *>(0)
                 );
     glEnableVertexAttribArray(0);
     glBindVertexArray(0);
+    
+    updModelMat();
     
     GLuint vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -115,7 +91,7 @@ Rect::Rect()
 
 
 
-void Rect::render(const glm::mat4 &view, const glm::mat4 &proj)
+void Circle::render(const glm::mat4 &view, const glm::mat4 &proj)
 {
     glUseProgram(m_shadProg);
     glBindVertexArray(m_VAO);
@@ -125,7 +101,7 @@ void Rect::render(const glm::mat4 &view, const glm::mat4 &proj)
     glUniformMatrix4fv(m_projLoc, 1, GL_FALSE, &proj[0][0]);
     glUniform3fv(m_colorLoc, 1, &m_color[0]);
     
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, getVerticesCount());
 }
 
 
@@ -134,8 +110,38 @@ void Rect::render(const glm::mat4 &view, const glm::mat4 &proj)
 
 
 
-void Rect::updModelMat()
+void Circle::updModelMat()
 {
-    m_model = glm::scale(glm::mat4(1.0f), glm::vec3(m_size, 1.0f));
+    glBindVertexArray(m_VAO);
+    glBufferData(
+                GL_ARRAY_BUFFER,
+                3 * getVerticesCount() * sizeof(GLfloat), calcVertices(),
+                GL_STATIC_DRAW
+                );
+    
+    m_model = glm::scale(glm::mat4(1.0f), glm::vec3(m_radius));
     m_model = glm::translate(m_model, glm::vec3(m_pos, 0.0f));
+}
+
+
+
+glm::vec2 Circle::getVertice(int i)
+{
+    float angle = 2 * glm::pi<float>() * (i % m_details) / (m_details * 1.f);
+    return {glm::cos(angle) / 2.f, glm::sin(angle) / 2.f};
+}
+#include <iostream>
+GLfloat * Circle::calcVertices()
+{
+    GLfloat * vertices = new GLfloat[3 * getVerticesCount()];
+    vertices[0] = 0.f; vertices[1] = 0.f; vertices[2] = 0.f;
+    for (int i = 1; i < getVerticesCount(); ++i)
+    {
+        glm::vec2 p = getVertice(i / 2);
+        vertices[3 * i + 0] = p.x;
+        vertices[3 * i + 1] = p.y;
+        vertices[3 * i + 2] = 0.f;
+    }
+    
+    return vertices;
 }

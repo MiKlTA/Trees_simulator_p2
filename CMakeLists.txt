@@ -14,9 +14,22 @@ add_executable(MEGA_tree_simulator
     window.cpp
     rect.h
     rect.cpp
+    triangle.h
+    triangle.cpp
+    circle.h
+    circle.cpp
+    
+    id_object.h
     
     simulation_core.h
     simulation_core.cpp
+    tree.h
+    tree.cpp
+    tree_part.h
+    tree_part_manager.h
+    tree_part_manager.cpp
+    planet.h
+    planet.cpp
     )
 
 include_directories(D:/mingw32_810/LIBS/opencl/source/external/OpenCL-Headers)

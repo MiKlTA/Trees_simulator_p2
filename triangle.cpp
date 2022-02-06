@@ -1,13 +1,12 @@
-#include "rect.h"
+#include "triangle.h"
 
 #include <iostream>
 #include <fstream>
 
 
 
-Rect::Rect()
+Triangle::Triangle()
     : m_VBO(),
-      m_EBO(),
       m_VAO(),
       m_shadProg(),
       m_modelLoc(),
@@ -17,11 +16,20 @@ Rect::Rect()
       m_model(1.0f),
       m_color(0.5f),
       
-      m_pos(0.0f),
-      m_size(1.0f)
+      m_posV(),
+      m_pos(),
+      m_scale()
 {
+    m_posV[0] = {-0.2f, -0.2f};
+    m_posV[1] = {-2.f, 0.f};
+    m_posV[2] = {-1.f, -2.f};
+    m_pos = glm::vec2(0.0f);
+    m_scale = 1.0f;
+    
+    
+    
     std::ifstream ifs;
-    ifs.open("rectShader.vert");
+    ifs.open("triangleShader.vert");
     if (!ifs.is_open())
     {
         std::cout << "file is not open!" << std::endl;
@@ -35,7 +43,7 @@ Rect::Rect()
     ifs.read(vertexShaderSource, fileSize);
     ifs.close();
     
-    ifs.open("rectShader.frag");
+    ifs.open("triangleShader.frag");
     if (!ifs.is_open())
     {
         std::cout << "file is not open!" << std::endl;
@@ -49,48 +57,20 @@ Rect::Rect()
     ifs.read(fragmentShaderSource, fileSize);
     ifs.close();
     
-    GLfloat vertices[] =
-    {
-        -0.5f,  -0.5f,    0.0f,
-        0.5f,   -0.5f,    0.0f,
-        -0.5f,   0.5f,    0.0f,
-        0.5f,    0.5f,    0.0f,
-    };
-    
-    GLuint indices[] =
-    {
-        0, 1, 2,
-        1, 2, 3
-    };
-    
     glGenBuffers(1, &m_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(
-                GL_ARRAY_BUFFER,
-                sizeof(vertices), vertices,
-                GL_STATIC_DRAW
-                );
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    glGenBuffers(1, &m_EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-    glBufferData(
-                GL_ELEMENT_ARRAY_BUFFER,
-                sizeof(indices), indices,
-                GL_STATIC_DRAW
-                );
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glVertexAttribPointer(
                 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
                 reinterpret_cast<GLvoid *>(0)
                 );
     glEnableVertexAttribArray(0);
     glBindVertexArray(0);
+    
+    updModelMat();
     
     GLuint vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -107,6 +87,9 @@ Rect::Rect()
     glAttachShader(m_shadProg, fragmentShader);
     glLinkProgram(m_shadProg);
     
+    //TODO: check!!!
+    glUseProgram(m_shadProg);
+    
     m_modelLoc = glGetUniformLocation(m_shadProg, "model");
     m_viewLoc = glGetUniformLocation(m_shadProg, "view");
     m_projLoc = glGetUniformLocation(m_shadProg, "proj");
@@ -115,7 +98,8 @@ Rect::Rect()
 
 
 
-void Rect::render(const glm::mat4 &view, const glm::mat4 &proj)
+#include <random>
+void Triangle::render(const glm::mat4 &view, const glm::mat4 &proj)
 {
     glUseProgram(m_shadProg);
     glBindVertexArray(m_VAO);
@@ -125,7 +109,7 @@ void Rect::render(const glm::mat4 &view, const glm::mat4 &proj)
     glUniformMatrix4fv(m_projLoc, 1, GL_FALSE, &proj[0][0]);
     glUniform3fv(m_colorLoc, 1, &m_color[0]);
     
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 
@@ -134,8 +118,42 @@ void Rect::render(const glm::mat4 &view, const glm::mat4 &proj)
 
 
 
-void Rect::updModelMat()
+void Triangle::updModelMat()
 {
-    m_model = glm::scale(glm::mat4(1.0f), glm::vec3(m_size, 1.0f));
-    m_model = glm::translate(m_model, glm::vec3(m_pos, 0.0f));
+    glBindVertexArray(m_VAO);
+    
+    glm::vec2 v[3];
+    for (int i = 0; i < 3; ++i)
+        v[i] = m_posV[i];
+    
+    m_pos = v[0];
+    v[1] -= v[0];
+    v[2] -= v[0];
+    v[0] = glm::vec2(0.f, 0.f);
+    
+    const glm::vec2 &far
+            = (glm::length(v[1]) > glm::length(v[2]) ? v[1] : v[2]);
+    float squareSideHalf = std::max(std::abs(far.x), std::abs(far.y));
+    v[1] /= squareSideHalf;
+    v[2] /= squareSideHalf;
+    m_scale = squareSideHalf;
+    
+    GLfloat verts[9];
+    for (int i = 0; i < 3; ++i)
+    {
+        verts[3 * i]      = v[i].x;
+        verts[3 * i + 1]  = v[i].y;
+        verts[3 * i + 2]  = 0.f;
+    }
+    
+    glBufferData(
+                GL_ARRAY_BUFFER,
+                sizeof(verts), verts,
+                GL_DYNAMIC_DRAW
+                );
+    
+    // this case is special,
+    // and the matrices are multiplied in the code in this order only here!!!!
+    m_model = glm::translate(glm::mat4(1.0f), glm::vec3(m_pos, 0.0f));
+    m_model = glm::scale(m_model, glm::vec3(m_scale));
 }

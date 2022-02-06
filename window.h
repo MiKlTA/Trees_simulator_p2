@@ -19,6 +19,8 @@ public:
     int getMonitorWidth() const {return m_monSize.x;};
     int getMonitorHeight() const {return m_monSize.y;};
     
+    glm::vec2 comvertToWorldCoods(glm::ivec2 p);
+    
     
     
     void startWindowCycle();
@@ -51,10 +53,9 @@ private:
     
     
     static void keyCallback(
-            GLFWwindow *aWindow, int key, int scancode, int action, int mode
+            GLFWwindow *aWindow, int key, int scancode, int action, int mods
             );
-    static void cursorPosCallback(GLFWwindow* , double x, double y)
-    {Window::inst()->m_mousePos = glm::vec2(x, y);}
+    static void cursorPosCallback(GLFWwindow* , double x, double y);
     static void mouseButtonCallback(
             GLFWwindow* window, int button, int action, int mods
             );
@@ -62,7 +63,7 @@ private:
     static constexpr glm::vec2 defaultCamPos() {return glm::vec2(0.f, 0.f);}
     static float defaultCamScale() {return 10.f;}
     
-    static float dCamPos() {return 1.f;}
+    static float dCamPos() {return 0.02f;}
     static float kCamScale() {return 1.02f;}
 };
 

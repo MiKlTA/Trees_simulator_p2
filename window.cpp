@@ -17,6 +17,24 @@ Window * Window::inst()
 
 
 
+glm::vec2 Window::comvertToWorldCoods(glm::ivec2 p)
+{
+    int height, width;
+    glfwGetWindowSize(m_window, &width, &height);
+    
+    glm::vec2 t(p.x, height - p.y);
+    t.x /= (width * 1.0f);
+    t.y /= (height * 1.0f);
+    
+    glm::vec2 screenSize = m_viewSize * m_camScale;
+    t *= screenSize;
+    
+    t += m_camPos - screenSize / 2.0f;
+    return t;
+}
+
+
+
 void Window::startWindowCycle()
 {
     glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
@@ -59,7 +77,7 @@ Window::Window()
                            &x, &y, &m_monSize.x, &m_monSize.y);}
     m_window = glfwCreateWindow(
                 m_monSize.x, m_monSize.y,
-                "Margarita is the best!",
+                "M is the b!",
                 nullptr, nullptr
                 );
     
@@ -80,7 +98,7 @@ Window::Window()
     m_camPos = defaultCamPos();
     updViewMat();
     
-    m_simcore = new SimulationCore;
+    m_simcore = new SimulationCore(this);
 }
 
 Window::~Window()
@@ -92,24 +110,26 @@ Window::~Window()
 
 void Window::handleInputCameraMove()
 {
+    float dr = dCamPos() * m_camScale;
+    
     if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        m_camPos.x += dCamPos();
+        m_camPos.x += dr;
         updViewMat();
     }
     if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        m_camPos.x -= dCamPos();
+        m_camPos.x -= dr;
         updViewMat();
     }
     if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        m_camPos.y += dCamPos();
+        m_camPos.y += dr;
         updViewMat();
     }
     if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        m_camPos.y -= dCamPos();
+        m_camPos.y -= dr;
         updViewMat();
     }
     if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
@@ -122,22 +142,6 @@ void Window::handleInputCameraMove()
         m_camScale /= kCamScale();
         updProjMat();
     }
-}
-
-glm::ivec2 Window::getMouseFieldPos()
-{
-    int height, width;
-    glfwGetWindowSize(m_window, &width, &height);
-    
-    glm::vec2 p(m_mousePos.x, height - m_mousePos.y);
-    p.x /= (width * 1.0f);
-    p.y /= (height * 1.0f);
-    
-    glm::vec2 screenSize = m_viewSize * m_camScale;
-    p *= screenSize;
-    
-    p += m_camPos - screenSize / 2.0f;
-    return glm::ivec2(p.x, p.y);
 }
 
 
@@ -158,7 +162,7 @@ void Window::updProjMat()
 
 
 void Window::keyCallback(
-        GLFWwindow *aWindow, int key, int scancode, int action, int mode
+        GLFWwindow *aWindow, int key, int scancode, int action, int mods
         )
 {
     Window *w = Window::inst();
@@ -176,11 +180,23 @@ void Window::keyCallback(
             break;
         }
     }
+    
+    w->m_simcore->onKeyPress(key, action, mods);
+}
+
+void Window::cursorPosCallback(GLFWwindow *, double x, double y)
+{
+    Window *w = Window::inst();
+    
+    Window::inst()->m_mousePos = glm::vec2(x, y);
+    w->m_simcore->onMouseMove(int(x), int(y));
 }
 
 void Window::mouseButtonCallback(
         GLFWwindow* window, int button, int action, int mods
         )
 {
-    // TODO:
+    Window *w = Window::inst();
+    
+    w->m_simcore->onMouseButtonPress(button, action, mods);
 }
