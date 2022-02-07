@@ -20,9 +20,12 @@ add_executable(MEGA_tree_simulator
     circle.cpp
     
     id_object.h
+    interpolation.h
     
     simulation_core.h
     simulation_core.cpp
+    dna.h
+    dna.cpp
     tree.h
     tree.cpp
     tree_part.h

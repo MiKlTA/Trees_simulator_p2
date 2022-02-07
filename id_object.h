@@ -16,7 +16,7 @@ public:
         unsigned long long id;
         do
         {
-            id = rand() * rand() * rand() * rand();
+            id = std::rand() * std::rand() * std::rand() * std::rand();
         }
         while (m_ids.find(id) != m_ids.end());
     }

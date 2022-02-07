@@ -8,7 +8,7 @@ class Tree
 public:
     
 private:
-}
+};
 
 
 
