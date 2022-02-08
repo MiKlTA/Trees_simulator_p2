@@ -20,7 +20,9 @@ add_executable(MEGA_tree_simulator
     circle.cpp
     
     id_object.h
+    id_object.cpp
     interpolation.h
+    interpolation.cpp
     
     simulation_core.h
     simulation_core.cpp
@@ -29,6 +31,11 @@ add_executable(MEGA_tree_simulator
     tree.h
     tree.cpp
     tree_part.h
+    tree_part.cpp
+    root.h
+    root.cpp
+    stem.h
+    stem.cpp
     tree_part_manager.h
     tree_part_manager.cpp
     planet.h

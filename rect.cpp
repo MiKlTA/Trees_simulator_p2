@@ -63,6 +63,9 @@ Rect::Rect()
         1, 2, 3
     };
     
+    glGenVertexArrays(1, &m_VAO);
+    glBindVertexArray(m_VAO);
+    
     glGenBuffers(1, &m_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(
@@ -70,7 +73,6 @@ Rect::Rect()
                 sizeof(vertices), vertices,
                 GL_STATIC_DRAW
                 );
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     glGenBuffers(1, &m_EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
@@ -79,18 +81,12 @@ Rect::Rect()
                 sizeof(indices), indices,
                 GL_STATIC_DRAW
                 );
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     
-    glGenVertexArrays(1, &m_VAO);
-    glBindVertexArray(m_VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glVertexAttribPointer(
                 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
                 reinterpret_cast<GLvoid *>(0)
                 );
     glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
     
     GLuint vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -111,6 +107,20 @@ Rect::Rect()
     m_viewLoc = glGetUniformLocation(m_shadProg, "view");
     m_projLoc = glGetUniformLocation(m_shadProg, "proj");
     m_colorLoc = glGetUniformLocation(m_shadProg, "color");
+}
+
+
+
+void Rect::lookAt(glm::vec2 from, glm::vec2 to, float thickness)
+{
+    glm::vec2 genVec = to - from;
+    float length, angle;
+    length = glm::length(genVec);
+    angle = glm::acos(genVec.x / length);
+    
+    m_model = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+    m_model = glm::scale(m_model, glm::vec3(length, thickness, 1.0f));
+    m_model = glm::translate(m_model, glm::vec3(from + genVec / 2.0f, 0.0f));
 }
 
 

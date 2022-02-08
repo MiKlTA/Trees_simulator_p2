@@ -61,7 +61,7 @@ private:
             );
     
     static constexpr glm::vec2 defaultCamPos() {return glm::vec2(0.f, 0.f);}
-    static float defaultCamScale() {return 10.f;}
+    static float defaultCamScale() {return 50.f;}
     
     static float dCamPos() {return 0.02f;}
     static float kCamScale() {return 1.02f;}

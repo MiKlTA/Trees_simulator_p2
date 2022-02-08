@@ -37,7 +37,7 @@ glm::vec2 Window::comvertToWorldCoods(glm::ivec2 p)
 
 void Window::startWindowCycle()
 {
-    glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
+    glClearColor(0.1f, 0.05f, 0.15f, 1.0f);
     
     while (!glfwWindowShouldClose(m_window))
     {

@@ -20,9 +20,9 @@ Triangle::Triangle()
       m_pos(),
       m_scale()
 {
-    m_posV[0] = {-0.2f, -0.2f};
-    m_posV[1] = {-2.f, 0.f};
-    m_posV[2] = {-1.f, -2.f};
+    m_posV[0] = {-0.5f, -0.5f};
+    m_posV[1] = {0.5f, -0.5f};
+    m_posV[2] = {0.f, 0.5f};
     m_pos = glm::vec2(0.0f);
     m_scale = 1.0f;
     
@@ -57,18 +57,17 @@ Triangle::Triangle()
     ifs.read(fragmentShaderSource, fileSize);
     ifs.close();
     
+    glGenVertexArrays(1, &m_VAO);
+    glBindVertexArray(m_VAO);
+    
     glGenBuffers(1, &m_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     
-    glGenVertexArrays(1, &m_VAO);
-    glBindVertexArray(m_VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glVertexAttribPointer(
                 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
                 reinterpret_cast<GLvoid *>(0)
                 );
     glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
     
     updModelMat();
     
@@ -87,9 +86,6 @@ Triangle::Triangle()
     glAttachShader(m_shadProg, fragmentShader);
     glLinkProgram(m_shadProg);
     
-    //TODO: check!!!
-    glUseProgram(m_shadProg);
-    
     m_modelLoc = glGetUniformLocation(m_shadProg, "model");
     m_viewLoc = glGetUniformLocation(m_shadProg, "view");
     m_projLoc = glGetUniformLocation(m_shadProg, "proj");
@@ -98,7 +94,6 @@ Triangle::Triangle()
 
 
 
-#include <random>
 void Triangle::render(const glm::mat4 &view, const glm::mat4 &proj)
 {
     glUseProgram(m_shadProg);
@@ -121,6 +116,7 @@ void Triangle::render(const glm::mat4 &view, const glm::mat4 &proj)
 void Triangle::updModelMat()
 {
     glBindVertexArray(m_VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     
     glm::vec2 v[3];
     for (int i = 0; i < 3; ++i)

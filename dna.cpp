@@ -9,7 +9,7 @@
 DnaCodon & DnaCodon::operator=(const DnaCodon &c)
 {
     m_parentCodInd = c.m_parentCodInd;
-    m_type = c.m_type;
+    m_greenery = c.m_greenery;
     m_isSeed = c.m_isSeed;
     
     m_size = c.m_size;
@@ -23,7 +23,7 @@ DnaCodon & DnaCodon::operator=(const DnaCodon &c)
 void DnaCodon::save(std::ofstream &out)
 {
     out << m_parentCodInd << ' ';
-    out << m_type   << ' ';
+    out << m_greenery   << ' ';
     out << m_isSeed << ' ';
     
     out << m_size   << ' ';
@@ -33,7 +33,7 @@ void DnaCodon::save(std::ofstream &out)
 void DnaCodon::load(std::ifstream &in)
 {
     in >> m_parentCodInd;
-    in >> m_type;
+    in >> m_greenery;
     in >> m_isSeed;
     
     in >> m_size;
@@ -238,6 +238,6 @@ DnaCodon Dna::randomizeCodon()
     else
         return DnaCodon(
                         parentCodInd, size, angle,
-                        std::rand() % DnaCodon::typesCount()
+                        std::rand() / float(RAND_MAX)
                         );
 }

@@ -53,18 +53,17 @@ Circle::Circle(int details)
     ifs.read(fragmentShaderSource, fileSize);
     ifs.close();
     
+    glGenVertexArrays(1, &m_VAO);
+    glBindVertexArray(m_VAO);
+    
     glGenBuffers(1, &m_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     
-    glGenVertexArrays(1, &m_VAO);
-    glBindVertexArray(m_VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glVertexAttribPointer(
                 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
                 reinterpret_cast<GLvoid *>(0)
                 );
     glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
     
     updModelMat();
     
@@ -113,6 +112,7 @@ void Circle::render(const glm::mat4 &view, const glm::mat4 &proj)
 void Circle::updModelMat()
 {
     glBindVertexArray(m_VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(
                 GL_ARRAY_BUFFER,
                 3 * getVerticesCount() * sizeof(GLfloat), calcVertices(),
@@ -128,9 +128,9 @@ void Circle::updModelMat()
 glm::vec2 Circle::getVertice(int i)
 {
     float angle = 2 * glm::pi<float>() * (i % m_details) / (m_details * 1.f);
-    return {glm::cos(angle) / 2.f, glm::sin(angle) / 2.f};
+    return {glm::cos(angle), glm::sin(angle)};
 }
-#include <iostream>
+
 GLfloat * Circle::calcVertices()
 {
     GLfloat * vertices = new GLfloat[3 * getVerticesCount()];

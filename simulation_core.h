@@ -7,6 +7,11 @@
 #include "triangle.h"
 #include "circle.h"
 
+#include "planet.h"
+#include "tree.h"
+#include "tree_part.h"
+#include "tree_part_manager.h"
+
 
 
 class Window;
@@ -33,6 +38,9 @@ private:
     Rect *m_rect;
     Triangle *m_triangle;
     Circle *m_circle;
+    
+    Planet *m_planet;
+    Tree *m_tree;
 };
 
 

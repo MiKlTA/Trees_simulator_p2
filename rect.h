@@ -14,6 +14,7 @@ public:
     
     void setPos(glm::vec2 p) {m_pos = p; updModelMat();}
     void setSize(glm::vec2 s) {m_size = s; updModelMat();}
+    void lookAt(glm::vec2 from, glm::vec2 to, float thickness);
     
     glm::vec2 getPos() {return m_pos;}
     glm::vec2 getSize() {return m_size;}

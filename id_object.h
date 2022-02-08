@@ -11,19 +11,8 @@
 class IdObject
 {
 public:
-    IdObject()
-    {
-        unsigned long long id;
-        do
-        {
-            id = std::rand() * std::rand() * std::rand() * std::rand();
-        }
-        while (m_ids.find(id) != m_ids.end());
-    }
-    virtual ~IdObject()
-    {
-        m_ids.erase(m_ids.find(m_id));
-    }
+    IdObject();
+    virtual ~IdObject();
     
     unsigned long long id() {return m_id;}
     
@@ -32,10 +21,6 @@ private:
     
     unsigned long long m_id;
 };
-
-
-
-std::set<unsigned long long> IdObject::m_ids = std::set<unsigned long long>();
 
 
 

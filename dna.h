@@ -21,16 +21,16 @@ public:
     DnaCodon(int parentCodInd, int size, int angle)
         : 
           m_parentCodInd(parentCodInd),
-          m_type(-1),
+          m_greenery(0.0f),
           m_isSeed(true),
           
           m_size(size),
           m_angle(angle)
     { }
     
-    DnaCodon(int parentCodInd, int size, int angle, int type)
+    DnaCodon(int parentCodInd, int size, int angle, float greenery)
         : m_parentCodInd(parentCodInd),
-          m_type(std::max(type, 0) % (maxType() + 1)),
+          m_greenery(greenery),
           m_isSeed(false),
           
           m_size(size),
@@ -42,7 +42,7 @@ public:
     
     
     int parentCodInd() {return m_parentCodInd;}
-    int type() {return m_type;}
+    int greenery() {return m_greenery;}
     bool isSeed() {return m_isSeed;}
     
     float size() {return m_size;}
@@ -57,12 +57,9 @@ public:
     void save(std::ofstream &out);
     void load(std::ifstream &in);
     
-    static int typesCount() {return 8;}
-    static int maxType() {return typesCount() - 1;}
-    
 private:
     int m_parentCodInd;
-    int m_type;
+    float m_greenery;
     bool m_isSeed;
     
     float m_size;
@@ -106,9 +103,11 @@ private:
     bool canChangeCodon(int tarCodInd, DnaCodon c);
     void changeCodon(int tarCodInd, DnaCodon c);
     
+    DnaCodon randomizeCodon();
+    
     static float maxSize() {return 2.0f;}
     static float minSize() {return 0.3f;}
-    static int seedAppearChance() {return DnaCodon::typesCount() + 1;}
+    static int seedAppearChance() {return 10;}
     static int mutAddChance() {return 5;}
     static int mutRemChance() {return 1;}
     static int mutChangeChance() {return 2;}
