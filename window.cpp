@@ -44,7 +44,8 @@ void Window::startWindowCycle()
         glfwPollEvents();
         handleInputCameraMove();
         
-        m_simcore->update();
+        if (!m_paused)
+            m_simcore->update();
         
         glClear(GL_COLOR_BUFFER_BIT);
         
@@ -63,12 +64,16 @@ void Window::startWindowCycle()
 Window::Window()
     : m_window(),
       m_monSize(),
+      
       m_camPos(),
       m_camScale(),
       m_viewMat(),
       m_viewSize(),
       m_projMat(),
-      m_mousePos(0.0f)
+      m_mousePos(0.0f),
+      
+      m_simcore(),
+      m_paused(true)
 {
     glfwInit();
     
@@ -177,6 +182,13 @@ void Window::keyCallback(
             w->updProjMat();
             w->m_camPos = defaultCamPos();
             w->updViewMat();
+            break;
+        }
+    case GLFW_KEY_P:
+        switch (action)
+        {
+        case GLFW_PRESS:
+            w->m_paused = !w->m_paused;
             break;
         }
     }

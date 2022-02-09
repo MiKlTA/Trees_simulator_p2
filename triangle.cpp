@@ -148,8 +148,7 @@ void Triangle::updModelMat()
                 GL_DYNAMIC_DRAW
                 );
     
-    // this case is special,
-    // and the matrices are multiplied in the code in this order only here!!!!
-    m_model = glm::translate(glm::mat4(1.0f), glm::vec3(m_pos, 0.0f));
+    m_model = glm::mat4(1.0f);
+    m_model = glm::translate(m_model, glm::vec3(m_pos, 0.0f));
     m_model = glm::scale(m_model, glm::vec3(m_scale));
 }

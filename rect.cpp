@@ -118,9 +118,10 @@ void Rect::lookAt(glm::vec2 from, glm::vec2 to, float thickness)
     length = glm::length(genVec);
     angle = glm::acos(genVec.x / length);
     
-    m_model = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+    m_model = glm::mat4(1.0f);
+    m_model = glm::translate(glm::mat4(1.0f), glm::vec3(from + genVec / 2.0f, 0.0f));
+    m_model = glm::rotate(m_model, angle, glm::vec3(0.0f, 0.0f, 1.0f));
     m_model = glm::scale(m_model, glm::vec3(length, thickness, 1.0f));
-    m_model = glm::translate(m_model, glm::vec3(from + genVec / 2.0f, 0.0f));
 }
 
 
@@ -146,6 +147,7 @@ void Rect::render(const glm::mat4 &view, const glm::mat4 &proj)
 
 void Rect::updModelMat()
 {
-    m_model = glm::scale(glm::mat4(1.0f), glm::vec3(m_size, 1.0f));
+    m_model = glm::mat4(1.0f);
     m_model = glm::translate(m_model, glm::vec3(m_pos, 0.0f));
+    m_model = glm::scale(m_model, glm::vec3(m_size, 1.0f));
 }

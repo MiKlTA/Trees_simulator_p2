@@ -10,7 +10,7 @@ TreePart::TreePart(Planet *p, TreePart *par, PhysicPoint *mounting, float mass)
       m_mounting(mounting),
       m_mass(mass),
       m_nodeMass(mass),
-      m_growth(1.0f)
+      m_growth(0.0f)
 {
     if (par != nullptr)
         par->connect(this);
@@ -24,9 +24,26 @@ TreePart::~TreePart()
 
 
 
+void TreePart::calcPhysics()
+{
+    for (auto p : m_childParts)
+        p->calcPhysics();
+}
+
+
+
 void TreePart::continueGrow()
 {
-    m_growth = std::min(m_growth + growSpeed(), 1.0f);
+    if (m_growth + growSpeed() > 1.f)
+    {
+        m_growth = 1.f;
+        for (auto p : m_childParts)
+            p->continueGrow();
+    }
+    else
+    {
+        m_growth += growSpeed();
+    }
 }
 
 
@@ -56,4 +73,13 @@ void TreePart::calcMass()
 float TreePart::getMass()
 {
     return m_nodeMass;
+}
+
+
+
+void TreePart::render(const glm::mat4 &view, const glm::mat4 &proj)
+{
+    _render(view, proj);
+    for (auto p : m_childParts)
+        p->render(view, proj);
 }

@@ -12,9 +12,9 @@ SimulationCore::SimulationCore(Window *w)
     m_rect = new Rect;
     m_triangle = new Triangle;
     m_circle = new Circle(100);
-    m_triangle->setV({0.f, 50.f}, 0);
-    m_triangle->setV({10.f, 0.f}, 1);
-    m_triangle->setV({-10.f, 0.f}, 2);
+    m_triangle->setV({0.f, 3.f}, 0);
+    m_triangle->setV({1.f, 0.f}, 1);
+    m_triangle->setV({-2.f, 1.f}, 2);
     
     m_planet = new Planet(m_circle, 50.f);
     m_tree = new Tree(m_rect, m_triangle, m_planet);

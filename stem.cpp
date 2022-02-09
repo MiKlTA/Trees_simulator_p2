@@ -13,8 +13,8 @@ Stem::Stem(
       m_thickness(thickness)
 {
     m_segmentEnd = new PhysicPoint;
-    m_segmentEnd->pos = par->mounting()->pos + size;
-    m_segmentEnd->vel = par->mounting()->vel;
+    m_segmentEnd->pos = mounting->pos + size;
+    m_segmentEnd->vel = mounting->vel;
 }
 
 Stem::~Stem()
@@ -24,7 +24,11 @@ Stem::~Stem()
 
 
 
-void Stem::calcPhysics()
+// private:
+
+
+
+void Stem::_calcPhysics()
 {
     if (m_childParts.empty())
         return;
@@ -70,13 +74,11 @@ void Stem::calcPhysics()
     
     m_segmentEnd->calcVel(a);
     m_segmentEnd->calcPos();
-    
-    calcPhysics();
 }
 
 
 
-void Stem::render(const glm::mat4 &view, const glm::mat4 &proj)
+void Stem::_render(const glm::mat4 &view, const glm::mat4 &proj)
 {
     m_rect->lookAt(
                 m_mounting->pos,
@@ -85,8 +87,3 @@ void Stem::render(const glm::mat4 &view, const glm::mat4 &proj)
                    );
     m_rect->render(view, proj);
 }
-
-
-
-// private:
-

@@ -8,9 +8,15 @@ Tree::Tree(Rect *r, Triangle *t, Planet *p)
       
       m_planet(p)
 {
-    m_root = new Root(p, {0.0f, 51.0f});
-    Stem *s = new Stem(
-                r, p, m_root, m_root->mounting(), {0.7f, 0.7f}, 0.3f, 1.0f
+    m_root = new Root(p, {0.0f, 50.0f});
+    Stem *s1 = new Stem(
+                r, p, m_root, m_root->mounting(), {0.7f, 0.7f}, 0.1f, 1.0f
+                );
+    Stem *s2 = new Stem(
+                r, p, s1, s1->segmentEnd(), {-1.0f, 0.0f}, 0.1f, 1.0f
+                );
+    Stem *s3 = new Stem(
+                r, p, s2, s2->segmentEnd(), {0.5f, 1.5}, 0.1f, 1.0f
                 );
 }
 
@@ -18,7 +24,8 @@ Tree::Tree(Rect *r, Triangle *t, Planet *p)
 
 void Tree::update()
 {
-    // m_root->continueGrow();
+    m_root->continueGrow();
+    // m_root->calcPhysics();
 }
 
 

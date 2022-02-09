@@ -16,11 +16,9 @@ class Root : public TreePart
 public:
     Root(Planet *p, glm::vec2 pos);
     
-    void calcPhysics() override {};
-    
-    void render(const glm::mat4 &view, const glm::mat4 &proj) override;
-    
 private:
+    void _calcPhysics() override {};
+    void _render(const glm::mat4 &, const glm::mat4 &) override {};
 };
 
 

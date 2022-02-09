@@ -41,6 +41,7 @@ private:
     glm::vec2 m_mousePos;
     
     SimulationCore *m_simcore;
+    bool m_paused;
     
     
     
@@ -60,8 +61,8 @@ private:
             GLFWwindow* window, int button, int action, int mods
             );
     
-    static constexpr glm::vec2 defaultCamPos() {return glm::vec2(0.f, 0.f);}
-    static float defaultCamScale() {return 50.f;}
+    static constexpr glm::vec2 defaultCamPos() {return glm::vec2(0.f, 50.f);}
+    static float defaultCamScale() {return 5.f;}
     
     static float dCamPos() {return 0.02f;}
     static float kCamScale() {return 1.02f;}

@@ -31,7 +31,7 @@ public:
     TreePart(Planet *p, TreePart *par, PhysicPoint *mounting, float mass);
     virtual ~TreePart();
     
-    virtual void calcPhysics() = 0;
+    void calcPhysics();
     
     void continueGrow();
     
@@ -41,7 +41,7 @@ public:
     float getMass();
     PhysicPoint * mounting() {return m_mounting;}
     
-    virtual void render(const glm::mat4 &view, const glm::mat4 &proj) = 0;
+    void render(const glm::mat4 &view, const glm::mat4 &proj);
     
 protected:
     TreePart *m_parentPart;
@@ -67,6 +67,8 @@ protected:
                 break;
             }
     }
+    virtual void _calcPhysics() = 0;
+    virtual void _render(const glm::mat4 &view, const glm::mat4 &proj) = 0;
     
     float getCurMass() {return m_mass * m_growth;}
     

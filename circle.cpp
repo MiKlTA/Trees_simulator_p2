@@ -119,8 +119,9 @@ void Circle::updModelMat()
                 GL_STATIC_DRAW
                 );
     
-    m_model = glm::scale(glm::mat4(1.0f), glm::vec3(m_radius));
+    m_model = glm::mat4(1.0f);
     m_model = glm::translate(m_model, glm::vec3(m_pos, 0.0f));
+    m_model = glm::scale(m_model, glm::vec3(m_radius));
 }
 
 

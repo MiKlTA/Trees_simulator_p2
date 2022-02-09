@@ -22,9 +22,9 @@ public:
             );
     ~Stem();
     
-    void calcPhysics() override;
+    PhysicPoint * segmentEnd() {return m_segmentEnd;}
     
-    void render(const glm::mat4 &view, const glm::mat4 &proj) override;
+    
     
 private:
     Rect *m_rect;
@@ -33,6 +33,11 @@ private:
     float m_thickness;
     
     PhysicPoint *m_segmentEnd;
+    
+    
+    
+    void _calcPhysics() override;
+    void _render(const glm::mat4 &view, const glm::mat4 &proj) override;
     
     float thickness() {return m_growth * m_thickness;}
     glm::vec2 size() {return m_mounting->pos - m_segmentEnd->pos;}
