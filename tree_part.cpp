@@ -5,12 +5,14 @@
 TreePart::TreePart(Planet *p, TreePart *par, PhysicPoint *mounting, float mass)
     : m_parentPart(par),
       m_childParts(),
+      m_isBroken(false),
+      
       m_planet(p),
       
       m_mounting(mounting),
       m_mass(mass),
       m_nodeMass(mass),
-      m_growth(1.0f)
+      m_growth(0.0f)
 {
     if (par != nullptr)
         par->connect(this);
@@ -66,14 +68,10 @@ void TreePart::calcMass()
     float mass = getCurMass();
     for (auto p : m_childParts)
     {
-        mass += p->getMass();
+        p->calcMass();
+        mass += p->getNodeMass();
     }
     m_nodeMass = mass;
-}
-
-float TreePart::getMass()
-{
-    return m_nodeMass;
 }
 
 
@@ -83,4 +81,20 @@ void TreePart::render(const glm::mat4 &view, const glm::mat4 &proj)
     _render(view, proj);
     for (auto p : m_childParts)
         p->render(view, proj);
+}
+
+
+
+// private:
+
+
+
+void TreePart::disconnect(TreePart *childPart)
+{
+    for (auto i = m_childParts.begin(); i < m_childParts.end(); ++i)
+        if (*i == childPart)
+        {
+            m_childParts.erase(i);
+            break;
+        }
 }

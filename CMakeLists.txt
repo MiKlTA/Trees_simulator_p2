@@ -22,7 +22,6 @@ add_executable(MEGA_tree_simulator
     id_object.h
     id_object.cpp
     interpolation.h
-    interpolation.cpp
     
     simulation_core.h
     simulation_core.cpp

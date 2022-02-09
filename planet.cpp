@@ -15,13 +15,15 @@ Planet::Planet(Circle *c, float radius)
 
 glm::vec2 Planet::g(glm::vec2 r)
 {
-    float R = glm::length(r);
-    if (R == 0.f)
-        R += 1.0e-9;
-    return -G() * r / (R * R * R);
+//    G == 1.0f
+//    float R = glm::length(r);
+//    if (R == 0.f)
+//        R += 1.0e-9;
+//    return -G() * r / (R * R * R);
+    return (-glm::normalize(r)) * G();
 }
 
-float Planet::light(glm::vec2 r)
+float Planet::light(glm::vec2)
 {
     return light();
 }

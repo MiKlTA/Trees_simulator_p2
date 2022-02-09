@@ -227,7 +227,7 @@ void Dna::changeCodon(int tarCodInd, DnaCodon c)
 DnaCodon Dna::randomizeCodon()
 {
     int parentCodInd = std::rand() % m_codons.size();
-    float size= linearInterp(
+    float size = linearInterp<float, float>(
                 minSize(), 0, maxSize(), RAND_MAX - 1, std::rand()
                 );
     float angle
