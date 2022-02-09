@@ -20,7 +20,7 @@ public:
     
     void render(const glm::mat4 &view, const glm::mat4 &proj);
     
-    static float elasticity() {return 0.001f;}
+    static float elasticity() {return 10.0f;}
     
 private:
     Circle *m_circle;
@@ -28,7 +28,7 @@ private:
     float m_radius;
     
     static constexpr glm::vec3 color() {return glm::vec3(0.6f, 0.5f, 0.75f);}
-    static float G() {return 0.001f;}
+    static float G() {return 10.0f;}
     static float light() {return 1.0f;}
 };
 

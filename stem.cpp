@@ -10,6 +10,7 @@ Stem::Stem(
       m_rect(r),
       
       m_startSize(size),
+      m_size(size),
       m_thickness(thickness)
 {
     m_segmentEnd = new PhysicPoint;
@@ -30,36 +31,33 @@ Stem::~Stem()
 
 void Stem::_calcPhysics()
 {
-    if (m_childParts.empty())
-        return;
-    m_parentPart->mounting()->calcPos();
-    glm::vec2 n = glm::normalize(size());
+    m_segmentEnd->pos = m_mounting->pos + size();
+    
+    glm::vec2 r = glm::normalize(size());
     glm::vec2 t = glm::vec2(glm::cross(
                                 glm::vec3(0.0f, 0.0f, 1.0f),
                                 glm::vec3(size(), 0.0f)
                                 ));
     
-    glm::vec2 g = m_planet->g(m_mounting->pos);
+    glm::vec2 g = m_planet->g(m_segmentEnd->pos);
     glm::vec2 radialG, tangentG;
-    radialG = glm::dot(g, n) * n;
+    radialG = glm::dot(g, r) * r;
     tangentG = g - radialG;
     
-    float mass = getMass();
+    float mass = getMass() - getCurMass() / 2.f;
     
     glm::vec2 dr = size() - m_startSize;
     float da = glm::asin(
-                glm::dot(
-                    glm::cross(
-                        glm::vec3(size(), 0.0f),
-                        glm::vec3(m_startSize, 0.0f)
-                        ),
-                    glm::vec3(0.0f, 0.0f, 1.0f)
-                    )
+                glm::cross(
+                    glm::vec3(glm::normalize(size()), 0.0f),
+                    glm::vec3(glm::normalize(m_startSize), 0.0f)
+                    ).z
                 );
     
     glm::vec2 resRadialF, resTangentF;
-    resRadialF = (getElasticity() * glm::length(dr) - mass * g.r) * n;
-    resTangentF = (getAngleElasticity() * da - mass * g.t) * glm::length(dr)* t;
+    resRadialF = mass * radialG - getElasticity() * dr;
+    resTangentF = (getAngleElasticity() * da * t - mass * tangentG)
+            * glm::length(size());
     
     glm::vec2 nx(1.0f, 0.0f);
     glm::vec2 ny(0.0f, 1.0f);
@@ -68,12 +66,13 @@ void Stem::_calcPhysics()
     resF.x = glm::dot(resRadialF, nx) + glm::dot(resTangentF, nx);
     resF.y = glm::dot(resRadialF, ny) + glm::dot(resTangentF, ny);
     
-    resF += m_planet->cross(m_mounting->pos) * m_planet->elasticity();
+    resF += -m_planet->cross(m_segmentEnd->pos) * m_planet->elasticity();
     
     glm::vec2 a(resF / mass);
     
     m_segmentEnd->calcVel(a);
     m_segmentEnd->calcPos();
+    m_size = m_segmentEnd->pos - m_mounting->pos;
 }
 
 

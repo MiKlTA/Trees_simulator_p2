@@ -10,7 +10,7 @@ TreePart::TreePart(Planet *p, TreePart *par, PhysicPoint *mounting, float mass)
       m_mounting(mounting),
       m_mass(mass),
       m_nodeMass(mass),
-      m_growth(0.0f)
+      m_growth(1.0f)
 {
     if (par != nullptr)
         par->connect(this);
@@ -26,6 +26,7 @@ TreePart::~TreePart()
 
 void TreePart::calcPhysics()
 {
+    _calcPhysics();
     for (auto p : m_childParts)
         p->calcPhysics();
 }

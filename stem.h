@@ -30,6 +30,7 @@ private:
     Rect *m_rect;
     
     glm::vec2 m_startSize;
+    glm::vec2 m_size;
     float m_thickness;
     
     PhysicPoint *m_segmentEnd;
@@ -40,10 +41,10 @@ private:
     void _render(const glm::mat4 &view, const glm::mat4 &proj) override;
     
     float thickness() {return m_growth * m_thickness;}
-    glm::vec2 size() {return m_mounting->pos - m_segmentEnd->pos;}
+    glm::vec2 size() {return m_size;}
     
-    float getElasticity() {return 0.01f * m_thickness;}
-    static float getAngleElasticity() {return 0.01f;}
+    float getElasticity() {return 1.0f * m_thickness;}
+    static float getAngleElasticity() {return 0.1f;}
 };
 
 

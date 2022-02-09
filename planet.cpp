@@ -17,7 +17,7 @@ glm::vec2 Planet::g(glm::vec2 r)
 {
     float R = glm::length(r);
     if (R == 0.f)
-        R += __FLT_MIN__;
+        R += 1.0e-9;
     return -G() * r / (R * R * R);
 }
 
