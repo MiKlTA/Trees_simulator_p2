@@ -3,10 +3,9 @@
 
 
 
-#include <vector>
-
 #include "opengl.h"
 #include "interpolation.h"
+#include "angle_between_vectors.h"
 #include "rect.h"
 
 #include "tree_part.h"
@@ -27,13 +26,14 @@ public:
     float greeneryFactor()
     {return (1.f - 0.1f) * m_greenery * m_greenery + 0.1f;}
     
+    glm::vec2 psCenter() override {return mounting()->pos + size() / 2.0f;}
+    
     
     
 private:
     Rect *m_rect;
     
     glm::vec2 m_startSize;
-    glm::vec2 m_size;
     float m_greenery;
     
     PhysicPoint *m_segmentEnd;
@@ -49,15 +49,19 @@ private:
     float maxPossibleThickness() {return 1.0f;}
     
     float maxMass() {return maxPossibleMass() * greeneryFactor();}
-    static float maxPossibleMass() {return 200.f;}
+    static float maxPossibleMass() {return 1000.f;}
     
-    glm::vec2 size() {return m_size;}
-    float stretching() {return glm::length(m_size) / glm::length(m_startSize);}
+    glm::vec2 size() {return m_segmentEnd->pos - mounting()->pos;}
+    float stretching() {return glm::length(size()) / glm::length(m_startSize);}
     float stretchDelta() {return glm::abs(1.0f - stretching());}
     float maxStretchDelta() {return 0.1f;}
+    float stretchAngleDelta();
+    float maxStretchAngleDelta() {return 0.1f;}
     
-    float getElasticity() {return 1.0f * thickness();}
-    float getAngleElasticity() {return 1.0f * thickness();}
+    float getElasticity()
+    {return 30.0f * thickness() * (1.f - greeneryFactor());}
+    float getAngleElasticity()
+    {return 10.0f * thickness() * (1.f - greeneryFactor());}
 };
 
 

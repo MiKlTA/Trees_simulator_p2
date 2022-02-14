@@ -28,7 +28,7 @@ private:
     float m_radius;
     
     static constexpr glm::vec3 color() {return glm::vec3(0.6f, 0.5f, 0.75f);}
-    static float G() {return 0.0001f;}
+    static float G() {return 0.00001f;}
     static float light() {return 1.0f;}
 };
 

@@ -22,6 +22,7 @@ add_executable(MEGA_tree_simulator
     id_object.h
     id_object.cpp
     interpolation.h
+    angle_between_vectors.h
     
     simulation_core.h
     simulation_core.cpp
@@ -35,6 +36,10 @@ add_executable(MEGA_tree_simulator
     root.cpp
     stem.h
     stem.cpp
+    leaf.h
+    leaf.cpp
+    seed.h
+    seed.cpp
     tree_part_manager.h
     tree_part_manager.cpp
     planet.h

@@ -40,6 +40,7 @@ private:
     Circle *m_circle;
     
     Planet *m_planet;
+    TreePartManager *m_tpManager;
     Tree *m_tree;
 };
 

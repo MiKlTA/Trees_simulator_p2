@@ -13,8 +13,9 @@ Stem::Stem(
       m_rect(r),
       
       m_startSize(size),
-      m_size(size),
-      m_greenery(greenery)
+      m_greenery(greenery),
+      
+      m_segmentEnd()
 {
     m_segmentEnd = new PhysicPoint;
     m_segmentEnd->pos = mounting->pos + size;
@@ -37,7 +38,6 @@ void Stem::_calcPhysics()
     // TODO: remove it
     if (m_growth < 1.0e-9)
         return;
-    m_segmentEnd->pos = m_mounting->pos + size();
     
     glm::vec2 r = glm::normalize(size());
     glm::vec2 t = glm::vec2(glm::cross(
@@ -78,7 +78,6 @@ void Stem::_calcPhysics()
     
     m_segmentEnd->calcVel(a);
     m_segmentEnd->calcPos();
-    m_size = m_segmentEnd->pos - m_mounting->pos;
     
     if (stretchDelta() > maxStretchDelta())
         m_isBroken = true;
@@ -99,7 +98,10 @@ void Stem::_render(const glm::mat4 &view, const glm::mat4 &proj)
                     woodColor(),
                     (1 - m_greenery) * growthFactor()
                     )
-                + stretchDelta()/maxStretchDelta() * glm::vec3(1.0f, 0.0f, 0.0f)
+                + stretchDelta()/maxStretchDelta()
+                    * glm::vec3(1.0f, 0.0f, 0.0f)
+                + stretchAngleDelta()/maxStretchAngleDelta()
+                    * glm::vec3(1.0f, 0.0f, 0.0f)
                 );
     m_rect->render(view, proj);
 }
@@ -112,4 +114,14 @@ float Stem::maxThickness()
     float l = minPossibleThickness();
     float g = maxPossibleThickness();
     return (g - l) * t*t + l;
+}
+
+
+
+float Stem::stretchAngleDelta()
+{
+    return glm::abs(
+                fullAngle<glm::vec2, float>(size())
+                - fullAngle<glm::vec2, float>(m_startSize)
+                );
 }

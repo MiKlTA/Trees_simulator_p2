@@ -17,7 +17,8 @@ SimulationCore::SimulationCore(Window *w)
     m_triangle->setV({-2.f, 1.f}, 2);
     
     m_planet = new Planet(m_circle, 50.f);
-    m_tree = new Tree(m_rect, m_triangle, m_planet);
+    m_tpManager = new TreePartManager;
+    m_tree = new Tree(m_rect, m_triangle, m_tpManager, m_planet);
 }
 
 SimulationCore::~SimulationCore()

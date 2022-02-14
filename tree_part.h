@@ -40,6 +40,8 @@ public:
     float growthFactor()
     {return (1.f - 0.15f) * m_growth * m_growth + 0.15f;}
     
+    virtual glm::vec2 psCenter() = 0;
+    
     void destroyChildParts();
     
     void calcMass();
