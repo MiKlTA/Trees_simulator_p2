@@ -113,11 +113,13 @@ void Circle::updModelMat()
 {
     glBindVertexArray(m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+    GLfloat *vertices = calcVertices();
     glBufferData(
                 GL_ARRAY_BUFFER,
-                3 * getVerticesCount() * sizeof(GLfloat), calcVertices(),
+                3 * getVerticesCount() * sizeof(GLfloat), vertices,
                 GL_STATIC_DRAW
                 );
+    delete[] vertices;
     
     m_model = glm::mat4(1.0f);
     m_model = glm::translate(m_model, glm::vec3(m_pos, 0.0f));
